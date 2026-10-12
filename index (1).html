@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIGHTREACTS - FTC JOGO GIGANTE</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+            opacity: 0.3;
+            pointer-events: none;
+            object-fit: cover;
+        }
+        html { cursor: url('curso.cur') 16 16, auto !important; }
+        a, button { cursor: url('curso.cur') 16 16, pointer !important; }
+        
+        main { 
+            background-color: rgba(22, 18, 36, 0.85) !important; 
+            backdrop-filter: blur(5px);
+            text-align: center;
+            max-width: 850px !important; /* Caixa ligeiramente maior para acolher o jogo gigante */
+        }
+
+        /* Contentor do Jogo Gigante com o GIF do Flight */
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+            border: 4px solid var(--cor1);
+            border-radius: 8px;
+            box-shadow: 0px 0px 25px rgba(191, 85, 236, 0.6);
+            background-image: url('flight1.gif');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            background-color: rgba(15, 12, 27, 0.45);
+        }
+
+        #score {
+            font-family: var(--fonte-destaque);
+            font-size: 2.2em;
+            color: var(--cor2);
+            margin-top: 10px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        /* Botão Jogar de Novo Estilizado com as Cores do Site */
+        #restart-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 35px;
+            font-family: var(--fonte-destaque);
+            font-size: 2em;
+            background-color: var(--cor2);
+            color: var(--cor0);
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0px 0px 20px var(--cor2);
+            transition: 0.2s;
+        }
+
+        #restart-btn:hover {
+            background-color: #ffffff;
+            box-shadow: 0px 0px 30px #ffffff;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay loop muted playsinline class="video-bg">
+        <source src="video.mp4" type="video/mp4">
+    </video>
+
+    <header>
+        <h1>FLIGHTREACTS</h1>
+        <p>FTC E DUTTPACK E WETBANANAS</p>
+    </header>
+
+    <nav>
+        <a href="index.html">FTC</a>
+        <a href="https://duttpack.com" target="_blank">DUTT PACK</a>
+        <a href="wetbananas.html">WET BANANAS</a>
+        <a href="noticias.html">NOTÍCIAS</a>
+    </nav>
+
+    <main>
+        <h2>FTC SNAKE GAME GIGANTE</h2>
+        <div id="score">PONTOS: 0</div>
+        
+        <div id="game-container">
+            <canvas id="snakeGame" width="800" height="600"></canvas>
+            <button id="restart-btn" onclick="resetGame()">JOGAR DE NOVO</button>
+        </div>
+    </main>
+
+    <script>
+        const canvas = document.getElementById("snakeGame");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score");
+        const restartBtn = document.getElementById("restart-btn");
+
+        const box = 20; 
+        let snake, direction, food, score, gameLoop;
+
+        // Inicia as variáveis do jogo
+        function init() {
+            snake = [{ x: 20 * box, y: 15 * box }];
+            direction = "RIGHT";
+            score = 0;
+            scoreElement.innerText = "PONTOS: 0";
+            scoreElement.style.color = "var(--cor2)";
+            restartBtn.style.display = "none";
+            generateFood();
+            
+            // VELOCIDADE DA COBRA: Reduzido de 100 para 65 para dar muito menos delay (fica bem rápido!)
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(draw, 65); 
+        }
+
+        function generateFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width / box)) * box,
+                y: Math.floor(Math.random() * (canvas.height / box)) * box
+            };
+        }
+
+        document.addEventListener("keydown", setDirection);
+
+        function setDirection(event) {
+            if ((event.key === "ArrowLeft" || event.key === "a" || event.key === "A") && direction !== "RIGHT") direction = "LEFT";
+            else if ((event.key === "ArrowUp" || event.key === "w" || event.key === "W") && direction !== "DOWN") direction = "UP";
+            else if ((event.key === "ArrowRight" || event.key === "d" || event.key === "D") && direction !== "LEFT") direction = "RIGHT";
+            else if ((event.key === "ArrowDown" || event.key === "s" || event.key === "S") && direction !== "UP") direction = "DOWN";
+            
+            if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)) {
+                event.preventDefault();
+            }
+        }
+
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (head.x === array[i].x && head.y === array[i].y) return true;
+            }
+            return false;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenha a Cobra Roxa
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = i === 0 ? "#bf55ec" : "#8e44ad";
+                ctx.strokeStyle = "#161224";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Desenha a Comida Verde Elétrica com brilho
+            ctx.fillStyle = "#00e676";
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#00e676";
+            ctx.fillRect(food.x, food.y, box, box);
+            ctx.shadowBlur = 0; 
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if (direction === "LEFT") snakeX -= box;
+            if (direction === "UP") snakeY -= box;
+            if (direction === "RIGHT") snakeX += box;
+            if (direction === "DOWN") snakeY += box;
+
+            if (snakeX === food.x && snakeY === food.y) {
+                score++;
+                scoreElement.innerText = "PONTOS: " + score;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Detetar colisão com as paredes ou corpo
+            if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(gameLoop);
+                scoreElement.innerText = "GAME OVER! RECORDE: " + score;
+                scoreElement.style.color = "#ff3333";
+                restartBtn.style.display = "block"; // Mostra o botão no centro do GIF
+                return;
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function resetGame() {
+            init();
+        }
+
+        // Arranca o jogo pela primeira vez
+        init();
+    </script>
+
+</body>
+</html>

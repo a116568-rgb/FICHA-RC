@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIGHTREACTS - NOTÍCIAS</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .media-box { width: 100%; display: block; margin: 20px auto; border-radius: 8px; box-shadow: 0px 4px 15px rgba(0,0,0,0.5); }
+        html { cursor: url('curso.cur') 16 16, auto !important; }
+        a, button { cursor: url('curso.cur') 16 16, pointer !important; }
+        
+        /* Sidebar Super Chamativa Customizada */
+        aside {
+            background-color: #2e0854 !important;
+            border-left: 6px solid #00e676 !important; /* Linha verde em destaque */
+            box-shadow: 0px 0px 25px rgba(191, 85, 236, 0.6) !important; /* Brilho neon roxo */
+            animation: pulse-border 2s infinite alternate;
+        }
+        aside > h3 {
+            background-color: #00e676 !important; /* Título verde elétrico */
+            color: #0f0c1b !important;
+            font-family: 'Impact', sans-serif;
+            font-size: 1.4em;
+            letter-spacing: 2px;
+        }
+        aside > p {
+            color: #ffffff !important;
+            font-weight: bold;
+            font-size: 1.3em;
+            text-align: center;
+            text-shadow: 0px 0px 10px #bf55ec;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0px 0px 15px rgba(191, 85, 236, 0.4); }
+            100% { box-shadow: 0px 0px 30px rgba(0, 230, 118, 0.8); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>FLIGHTREACTS</h1>
+        <p>FTC E DUTTPACK E WETBANANAS</p>
+    </header>
+
+    <nav>
+        <a href="index.html">FTC</a>
+        <a href="https://duttpack.com" target="_blank">DUTT PACK</a>
+        <a href="wetbananas.html">WET BANANAS</a>
+        <a href="noticias.html">NOTÍCIAS</a>
+    </nav>
+
+    <main>
+        <h1>NOTÍCIAS</h1>
+        
+        <!-- Sidebar agora muito mais agressiva -->
+        <aside>
+            <h3>DUTT PACK</h3>
+            <p>FTC</p>
+        </aside>
+
+        <h2>BREAKING</h2>
+        <img src="flight3.gif" alt="Notícias Flight" class="flight-gif media-box">
+
+        <h2>DUTT PACK</h2>
+        <img src="flight2.gif" alt="Dutt Pack Extra" class="flight-gif media-box">
+    </main>
+
+</body>
+</html>
